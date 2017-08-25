@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+
 public class DatabaseBean implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String driver,url,username,password;

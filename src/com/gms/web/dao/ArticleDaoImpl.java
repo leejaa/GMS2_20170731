@@ -7,12 +7,12 @@ import java.util.List;
 import com.gms.web.constant.Database;
 import com.gms.web.constant.SQL;
 import com.gms.web.constant.Vendor;
-import com.gms.web.domain.ArticleBean;
+import com.gms.web.domain.BoardBean;
 import com.gms.web.factory.DatabaseFactory;
 
 public class ArticleDaoImpl implements ArticleDao{
-List<ArticleBean> articles;
-ArticleBean article;
+List<BoardBean> articles;
+BoardBean article;
 
 public static ArticleDaoImpl getInstance() {
 	try {
@@ -23,7 +23,7 @@ public static ArticleDaoImpl getInstance() {
 	return new ArticleDaoImpl();
 }
 	@Override
-	public int insert(ArticleBean article) {
+	public int insert(BoardBean article) {
 		int result=0;
 		try {
 			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
@@ -40,13 +40,13 @@ public static ArticleDaoImpl getInstance() {
 	}
 
 	@Override
-	public List<ArticleBean> selectAll() {
+	public List<BoardBean> selectAll() {
 		articles=new ArrayList<>();
 		try {
 			ResultSet rs=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
 					.prepareStatement(SQL.ARTICLE_LIST).executeQuery();
 			while(rs.next()){
-				article=new ArticleBean();
+				article=new BoardBean();
 				article.setArticleSeq(rs.getInt(Database.ARTICLE_SEQ));
 				article.setId(rs.getString(Database.ARTICLE_ID));
 				article.setTitle(rs.getString(Database.ARTICLE_TITLE));
@@ -63,13 +63,14 @@ public static ArticleDaoImpl getInstance() {
 	}
 
 	@Override
-	public List<ArticleBean> selectById(String id) {
+	public List<BoardBean> selectById(String id) {
 		articles=new ArrayList<>();
 		try {
+			Class.forName(Database.ORACLE_DRIVER);
 			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
 					.prepareStatement(SQL.ARTICLE_FINDBYID);
 			articles=selectAll();
-			for(ArticleBean a:articles){
+			for(BoardBean a:articles){
 				if(a.getId().contains(id)){
 					id=a.getId();
 					articles=new ArrayList<>();
@@ -78,7 +79,7 @@ public static ArticleDaoImpl getInstance() {
 			pstmt.setString(1, id);
 			ResultSet rs=pstmt.executeQuery();
 			while(rs.next()){
-				article=new ArticleBean();
+				article=new BoardBean();
 				article.setArticleSeq(rs.getInt(Database.ARTICLE_SEQ));
 				article.setId(rs.getString(Database.ARTICLE_ID));
 				article.setTitle(rs.getString(Database.ARTICLE_TITLE));
@@ -94,14 +95,14 @@ public static ArticleDaoImpl getInstance() {
 	}
 
 	@Override
-	public ArticleBean selectBySeq(String seq) {
+	public BoardBean selectBySeq(String seq) {
 		try {
 			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
 					.prepareStatement(SQL.ARTICLE_FINDBYSEQ);
 			pstmt.setString(1, seq);
 			ResultSet rs=pstmt.executeQuery();
 			while(rs.next()){
-				article=new ArticleBean();
+				article=new BoardBean();
 				article.setArticleSeq(rs.getInt(Database.ARTICLE_SEQ));
 				article.setId(rs.getString(Database.ARTICLE_ID));
 				article.setTitle(rs.getString(Database.ARTICLE_TITLE));
@@ -110,7 +111,7 @@ public static ArticleDaoImpl getInstance() {
 				article.setRegdate(rs.getString(Database.ARTICLE_REGDATE));
 				}
 				if(!rs.next()){
-					article=new ArticleBean();
+					article=new BoardBean();
 					article.setArticleSeq(0);
 					article.setContent("조회되지 않는 번호입니다");
 				}
@@ -122,7 +123,7 @@ public static ArticleDaoImpl getInstance() {
 	}
 
 	@Override
-	public int update(ArticleBean article) {
+	public int update(BoardBean article) {
 		int result=0;
 		
 		try {

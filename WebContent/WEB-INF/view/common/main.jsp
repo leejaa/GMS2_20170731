@@ -1,76 +1,48 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.Date" %>
-<%@page import="java.text.SimpleDateFormat"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/member.css"/>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<header>
-현재 시간 : <%=new SimpleDateFormat("yyyy년 MM월 dd일 a hh:mm:ss").format(new Date()) %>  <br />
-<h1><a href="<%=request.getContextPath()%>/index.jsp" class="float-right">메인으로 가기</a></h1>
-</header>
-<body>
-<div id="wrapper" class="gms-width-100pro">
-
-<h1 class="gms-text-center">성적관리시스템(GMS)</h1>
-<hr />
-<form action="<%=request.getContextPath()%>/member/join.do" method="post">
-<input type="submit" />
-</form>
-<div class="container" style="border-color:black; width: 80%; height: 1300px; margin-left: 130px; margin-top: 80px; margin-right: 50px;">
-<table id="index-tab" style="margin-left: 130px;margin-top: 50px; border-color: red; border-style: solid;">
-	<tr id="index-tab-tr">
-		<td><i class="glyphicon glyphicon-user">학생관리</i></td>
-		<td><i class="glyphicon glyphicon-cloud">성적관리</i></td>
-		<td><i class="glyphicon glyphicon-thumbs-up">게시판</i></td>
-	</tr>
-	<tr id="index-tab-tr">
-		<td>
-			<ul class="index-ul">
-				<li><a href="<%=request.getContextPath()%>/common.do?action=move&page=main">회원가입</a></li>
-				<li><a href="<%=request.getContextPath()%>/member/list.do">회원목록</a></li>
-				<li><a href="<%=request.getContextPath()%>/member/update.do">회원정보수정</a></li>
-				<li><a href="<%=request.getContextPath()%>/member/delete.do">회원탈퇴</a></li>
-			</ul>
-		</td>
-		<td>
-			<ul class="index-ul">
-				<li><a href="/WEB-INF/grade/grade_write.jsp">성적입력</a></li>
-				<li><a href="/WEB-INF/grade/grade_list.jsp">성적목록</a></li>
-				<li><a href="/WEB-INF/grade/grade_update.jsp">성적수정</a></li>
-				<li>성적삭제</li>
-			</ul>
-		</td>
-		<td>
-			<ul class="index-ul">
-				<li><a href="/WEB-INF/board/board_write.jsp">게시글 쓰기</a></li>
-				<li><a href="/WEB-INF/board/board_list.jsp">게시글 목록</a></li>
-				<li><a href="/WEB-INF/board/board_update.jsp">게시글 수정</a></li>
-				<li>게시글 삭제</li>
-			</ul>
-		</td>
-	</tr>
-
-</table>
-</div>
-</div>
-<footer style="width: 100%;height: 50px;padding: 10px;">
-	<div>
-  <p>Posted by: Lee Jahun</p>
-  <p>Contact information: <a href="jahun135@hanmail.net">
-  jahun135@hanmail.net</a>.</p>
-  <a href="/WEB-INF/util/jdbc_test.jsp">DB 연결테스트</a>
+<jsp:include page="${stx}/WEB-INF/view/common/common_head.jsp" />
+<div class="container">
+  <div class="page-header">
+    <h1>WELCOME TO GMS !!</h1>      
   </div>
-  
-<div align="right">
-<img src="<%=request.getContextPath()%>/img/sigong.png" style="max-width: 10%; height: auto;"/>
 </div>
-</footer>
-</body>
-</html>
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#myCarousel" data-slide-to="1"></li>
+    <li data-target="#myCarousel" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img src="https://overwatch-a.akamaihd.net/img/logos/overwatch-share-3d5a268515283007bdf3452e877adac466d579f4b44abbd05aa0a98aba582eeaebc4541f1154e57ec5a43693345bebda953381a7b75b58adbd29d3f3eb439ad2.jpg" alt="overwatch" style="width: 50%;margin-left: auto;margin-right: auto;display: block;">
+    </div>
+
+    <div class="item">
+      <img src="http://img1.itenjoy.co.kr/files/attach/images/110/772/002/d0aa9adf8d50aaea20d533ed9ca0200d.jpg" alt="sigong" style="width: 50%;margin-left: auto;margin-right: auto;display: block;">
+    </div>
+
+    <div class="item">
+      <img src="https://vignette3.wikia.nocookie.net/starcraft/images/b/b9/HotS_Logo2.jpg/revision/latest?cb=20110531234206" alt="starcraft" style="width: 50%;margin-left: auto;margin-right: auto;display: block;">
+      
+    </div>
+
+    
+  </div>
+
+  <!-- Left and right controls -->
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+<script>
+window.onload=mainLoad();
+</script>

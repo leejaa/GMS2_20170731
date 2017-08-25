@@ -1,14 +1,14 @@
 package com.gms.web.dao;
 import java.util.List;
 
-import com.gms.web.domain.ArticleBean;
+import com.gms.web.domain.BoardBean;
 
 public interface ArticleDao {
-	public int insert(ArticleBean article);
-	public List<ArticleBean> selectAll();
-	public List<ArticleBean> selectById(String id);
-	public ArticleBean selectBySeq(String seq);
-	public int update(ArticleBean article);
+	public int insert(BoardBean article);
+	public List<BoardBean> selectAll();
+	public List<BoardBean> selectById(String id);
+	public BoardBean selectBySeq(String seq);
+	public int update(BoardBean article);
 	public int delete(String seq);
 	public int count();
 }
