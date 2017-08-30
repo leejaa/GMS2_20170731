@@ -1,55 +1,33 @@
 package com.gms.web.command;
 
 
+
 import com.gms.web.constant.Extension;
 import com.gms.web.constant.Path;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class Command implements Commandable{
-	protected String directory,action,page,dir,view;
-
-	public String getView() {
-		return view;
+	@Getter 
+	protected String action,pageNumber,view;
+	@Getter @Setter
+	protected String dir,startRow,endRow,page,column,search,member_id,password;
+	
+	public void setPageNumber(String pageNumber) {
+		this.pageNumber =(pageNumber==null)?"1":pageNumber;
 	}
-
-	public String getDir() {
-		return dir;
-	}
-
-
-	public void setDir(String dir) {
-		this.dir = dir;
-	}
-
-
-	public String getDirectory() {
-		return directory;
-	}
-
-	public void setDirectory(String directory) {
-		this.directory = directory;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
+	
 	public void setAction(String action) {
-		this.action = action;
+		this.action =(action==null)?"move":action;
 	}
-
-	public String getPage() {
-		return page;
-	}
-
-	public void setPage(String page) {
-		this.page = page;
-	}
+	
 	@Override
 	public void process() {
-		this.view=Path.VIEW+dir+Path.SEPARATOR+page+Extension.JSP;
-	}
-	public String toString(){
-		return String.format("Command[DEST=%s/PAGE=%s/ACTION=%s]", directory,action,page);
+		this.view=(dir.equals("/common"))?"/WEB-INF/view/common/main.jsp":
+		Path.VIEW+dir+Path.SEPARATOR+page+Extension.JSP+"?pageNumber="+this.pageNumber+"&action="+this.action;
+		System.out.println("이동페이지 : "+this.view);
 	}
 
+	
 }

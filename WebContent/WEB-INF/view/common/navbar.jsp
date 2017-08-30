@@ -44,7 +44,7 @@
       <li><a onclick="moveTo('member','move','login')"><span class="glyphicon glyphicon-log-in"></span> 로그인</a></li>
         </c:when>
         <c:otherwise>
-        <li><a onclick="moveTo('member','move','detail')"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;${sessionScope.user.name}님</a></li>
+        <li><a onclick="detail()"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;${sessionScope.user.name}님</a></li>
 		 <li><a id="logout" onclick="logout()"><span class="glyphicon glyphicon-log-in"></span>로그아웃</a></li>
 		</c:otherwise>
 	</c:choose>
@@ -52,7 +52,9 @@
   </div>
 </nav>
 <script>
-
+function detail(){
+	location.href="${ctx}/member.do?action=detail&page=detail&member_id=${sessionScope.user.id}";
+}
 
 function moveTo(dir,action,page){
 	location.href="${ctx}/"+dir+".do?action="+action+"&page="+page;
@@ -67,7 +69,7 @@ function logout(){
 }
 
 function list(dir){
-	location.href="${ctx}/"+dir+".do?action=list&page=list&pageNumber=1";
+	location.href="${ctx}/"+dir+".do?action=search&page=search&pageNumber=1";
 }
 function mainLoad(){
 	var ul=document.getElementById("ul");
@@ -103,7 +105,6 @@ function mainLoad(){
 	
 }
 
-	
 
 </script>
 

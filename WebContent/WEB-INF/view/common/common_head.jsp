@@ -10,5 +10,5 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <header>
-<jsp:include page="navbar.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/view/common/navbar.jsp"></jsp:include>
 </header>

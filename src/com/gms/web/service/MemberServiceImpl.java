@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.gms.web.command.Command;
 import com.gms.web.dao.MemberDaoImpl;
 import com.gms.web.domain.MemberBean;
 import com.gms.web.domain.StudentBean;
@@ -17,51 +18,39 @@ public class MemberServiceImpl implements MemberService{
 		return MemberDaoImpl.getInstance().insert(map)=="0"?"join":"main";
 	}
 	@Override
-	public List<?> getMembers(Object o) {
-		return MemberDaoImpl.getInstance().selectAll(o);
+	public List<?> getMembers(Command cmd) {
+		return MemberDaoImpl.getInstance().selectAll(cmd);
 	}
 	@Override
-	public String countMembers() {
-		return MemberDaoImpl.getInstance().count();
+	public String countMembers(Command cmd) {
+		return MemberDaoImpl.getInstance().count(cmd);
 	}
 	@Override
-	public StudentBean studentById(String id) {
-		return MemberDaoImpl.getInstance().selectById(id);
+	public StudentBean studentById(Command cmd) {
+		return MemberDaoImpl.getInstance().selectById(cmd);
 	}
 	@Override
-	public List<MemberBean> getMemberByName(String name) {
-		return MemberDaoImpl.getInstance().selectByName(name);
+	public List<StudentBean> getMemberByName(Command cmd) {
+		return MemberDaoImpl.getInstance().selectByName(cmd);
 	}
 	@Override
 	public String modify(Map<?,?> map) {
 		return MemberDaoImpl.getInstance().update(map)=="0"?"update":"list";
 	}
 	@Override
-	public String remove(String id) {
-		return MemberDaoImpl.getInstance().delete(id)=="0"?"회원탈퇴실패":"회원탈퇴성공";
+	public String remove(Command cmd) {
+		return MemberDaoImpl.getInstance().delete(cmd)=="0"?"회원탈퇴실패":"회원탈퇴성공";
 	}
 	@Override
-	public Map<String,Object> login(StudentBean student) {
-		Map<String,Object> map=new HashMap<>();
-		String page="";
-		System.out.println("입력한 아이디값 : "+student.getMember_id());
-		StudentBean s=studentById(student.getMember_id());
-		System.out.println(s.toString());
-		if(s!=null){
-			if(student.getPassword().equals(s.getPassword())){
-				page="main";
-			}else{
-				page="login";
-			}
-		}else{
-			page="join";
-		}
-		map.put("page", page);
-		map.put("user", s);
-		return map;
+	public MemberBean login(Command cmd) {
+		return MemberDaoImpl.getInstance().login(cmd);
 	}
 	@Override
-	public MemberBean memberById(String id) {
-		return MemberDaoImpl.getInstance().memberById(id);
+	public MemberBean memberById(Command cmd) {
+		return MemberDaoImpl.getInstance().memberById(cmd);
+	}
+	@Override
+	public String countMembersByName(Command cmd) {
+		return MemberDaoImpl.getInstance().countByName(cmd);
 	}
 }

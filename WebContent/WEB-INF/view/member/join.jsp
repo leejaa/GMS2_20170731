@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="${stx}/WEB-INF/view/common/common_head.jsp" />
+<jsp:include page="/WEB-INF/view/common/common_head.jsp" />
 <div class="container">
   <h2>회원가입</h2>
    <form method="post" id="join_form">
@@ -77,7 +77,6 @@
 </body>
 <script>
 window.onload=mainLoad();
-
 function joinAlert(){
 	var member_id=document.getElementById("member_id").value;
 	var password=document.getElementById("password").value;

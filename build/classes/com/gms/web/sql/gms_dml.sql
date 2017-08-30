@@ -21,9 +21,9 @@ update member set subj_id='2005';
 select * from member order by regdate desc;
 delete from member where rownum>300;
 select * from subject;
-
+select count(*) as count from student where name like '%';
 select major_id, listagg(title,',') within group (order by title) title from subject group by major_id;
-
+select * from student where name like 't';
 
 -- 회원 리스트 수강과목까지 가지고 오기 !
 select rownum no, t3.*
@@ -40,7 +40,7 @@ order by no desc;
 
 select rownum no, t3.* from (select m.*,t2.title from member m join (select t.member_id,listagg(t.title,',') within group (order by t.title) title from (select m.*,s.title from member m join MEMBER_SUBJECT ms on ms.member_id=m.member_id join SUBJECT s on s.subj_id=ms.subj_id) t group by t.member_id) t2 on t2.member_id=m.member_id order by regdate desc) t3;
 
-select * from student;
+select * from member;
 
 create view student (num,member_id,name,password,ssn,regdate,major_id,phone,email,profile,gender,title)
 as

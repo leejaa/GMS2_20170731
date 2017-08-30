@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.gms.web.command.Command;
 import com.gms.web.constant.Database;
 import com.gms.web.constant.SQL;
 import com.gms.web.constant.Vendor;
@@ -76,17 +77,15 @@ public class MemberDaoImpl implements MemberDao{
 			return rs;	
 	}
 	@Override
-	public List<?> selectAll(Object o) {
+	public List<?> selectAll(Command cmd) {
 		members=new ArrayList<>();
-		
-		int[] arr=(int[])o;
 		
 		try{
 			 conn=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection();
 			
 					PreparedStatement pstmt=conn.prepareStatement(SQL.STUDENT_LIST);
-					pstmt.setString(1, String.valueOf(arr[0]));
-					pstmt.setString(2, String.valueOf(arr[1]));
+					pstmt.setString(1, String.valueOf(cmd.getStartRow()));
+					pstmt.setString(2, String.valueOf(cmd.getEndRow()));
 			
 			ResultSet rs=pstmt.executeQuery();
 			StudentBean student=null;
@@ -113,7 +112,7 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 	@Override
-	public String count() {
+	public String count(Command cmd) {
 		String count="0";
 		try{
 			ResultSet rs=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection().prepareStatement(SQL.STUDENT_COUNT).executeQuery();
@@ -126,12 +125,12 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 	@Override
-	public StudentBean selectById(String id) {
+	public StudentBean selectById(Command cmd) {
 		StudentBean student=new StudentBean();
 		try {
 			PreparedStatement pstmt=DriverManager.getConnection(Database.ORACLE_URL,Database.USERID,Database.PASSWORD)
 					.prepareStatement(SQL.MEMBER_FINDBYID);
-			pstmt.setString(1, id);
+			pstmt.setString(1, cmd.getMember_id());
 			ResultSet rs=pstmt.executeQuery();
 			if(rs.next()){
 				student.setNum(rs.getString(Database.MEMBER_NUM));
@@ -154,20 +153,41 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 	@Override
-	public List<MemberBean> selectByName(String name) {
-		List<MemberBean> list=new ArrayList<>();
-		MemberBean member=new MemberBean();
+	public List<StudentBean> selectByName(Command cmd) {
+		List<StudentBean> list=new ArrayList<>();
+		
 		try {
 			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
-					.prepareStatement(SQL.MEMBER_FINDBYNAME);
-			pstmt.setString(1, name);
+					.prepareStatement(SQL.STUDENT_FINDBYNAME);
+			
+			
+			if(cmd.getSearch().equals("null")){
+				cmd.setSearch("%");
+			}else{
+				cmd.setSearch("%"+cmd.getSearch()+"%");
+			}
+			
+			
+			pstmt.setString(1, cmd.getSearch());
+			pstmt.setString(2, cmd.getStartRow());
+			pstmt.setString(3, cmd.getEndRow());
 			ResultSet rs=pstmt.executeQuery();
+			StudentBean student=null;
 			while(rs.next()){
-				member.setId(rs.getString(Database.MEMBER_ID));
-				member.setName(rs.getString(Database.MEMBER_NAME));
-				member.setPw(rs.getString(Database.MEMBER_PASSWORD));
-				member.setRegdate(rs.getString(Database.MEMBER_REGDATE));
-				list.add(member);
+				student=new StudentBean();
+				student.setNum(rs.getString(Database.MEMBER_NUM));
+				student.setMember_id(rs.getString(Database.MEMBER_ID));
+				student.setName(rs.getString(Database.MEMBER_NAME));
+				student.setPassword(rs.getString(Database.MEMBER_PASSWORD));
+				student.setSsn(rs.getString(Database.MEMBER_SSN));
+				student.setRegdate(rs.getString(Database.MEMBER_REGDATE));
+				student.setMajor_id(rs.getString(Database.MEMBER_MAJOR));
+				student.setPhone(rs.getString(Database.MEMBER_PHONE));
+				student.setEmail(rs.getString(Database.MEMBER_EMAIL));
+				student.setProfile(rs.getString(Database.MEMBER_PROFILE));
+				student.setGender(rs.getString(Database.MEMBER_GENDER));
+				student.setSubject(rs.getString(Database.MEMBER_TITLE));
+				list.add(student);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -216,12 +236,12 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 	@Override
-	public String delete(String id) {
+	public String delete(Command cmd) {
 		String rs="0";
 		try {
 			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection()
 					.prepareStatement(SQL.MEMBER_DELETE);
-			pstmt.setString(1, id);
+			//pstmt.setString(1, id);
 			rs=String.valueOf(pstmt.executeUpdate());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -231,12 +251,12 @@ public class MemberDaoImpl implements MemberDao{
 
 
 	@Override
-	public MemberBean memberById(String id) {
+	public MemberBean memberById(Command cmd) {
 		MemberBean member=new MemberBean();
 		try {
 			PreparedStatement pstmt=DriverManager.getConnection(Database.ORACLE_URL,Database.USERID,Database.PASSWORD)
 					.prepareStatement(SQL.MEMBER_FINDBYID);
-			pstmt.setString(1, id);
+		//	pstmt.setString(1, id);
 			ResultSet rs=pstmt.executeQuery();
 			if(rs.next()){
 				member.setId(rs.getString(Database.MEMBER_ID));
@@ -252,6 +272,60 @@ public class MemberDaoImpl implements MemberDao{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return member;
+	}
+
+
+	@Override
+	public String countByName(Command cmd) {
+		String count="0";
+		
+		try{
+			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection().prepareStatement(SQL.STUDENT_COUNTBYNAME);
+			
+			
+			
+			if(cmd.getSearch().equals("null")){
+				cmd.setSearch("%");
+			}else{
+				cmd.setSearch("%"+cmd.getSearch()+"%");
+			}
+			System.out.println("search 값 : "+cmd.getSearch());
+			
+			SQL.COLUMN=cmd.getColumn();
+			pstmt.setString(1, cmd.getSearch());
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()){
+				count=rs.getString("count");
+			}
+		}catch (Exception e) {
+		}
+		return count;
+	}
+
+
+	@Override
+	public MemberBean login(Command cmd) {
+		member=new MemberBean();
+		try {
+			PreparedStatement pstmt=DatabaseFactory.createDatabase(Vendor.ORACLE, Database.USERID, Database.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_LOGIN);
+			pstmt.setString(1, cmd.getMember_id());
+			pstmt.setString(2, cmd.getPassword());
+			ResultSet rs=pstmt.executeQuery();
+			if(rs.next()){
+				member.setId(rs.getString("member_id"));
+				member.setName(rs.getString("name"));
+				member.setPw(rs.getString("password"));
+				member.setSsn(rs.getString("ssn"));
+				member.setRegdate(rs.getString("regdate"));
+				member.setPhone(rs.getString("phone"));
+				member.setEmail(rs.getString("email"));
+				member.setProfile(rs.getString("profile"));
+				member.setGender(rs.getString("gender"));
+			}
+		} catch (Exception e) {
+			
 		}
 		return member;
 	}

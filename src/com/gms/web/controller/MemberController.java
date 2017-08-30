@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.gms.web.command.Command;
+import com.gms.web.command.LoginCommand;
 import com.gms.web.constant.Action;
 import com.gms.web.constant.Database;
 import com.gms.web.domain.MemberBean;
@@ -33,36 +35,54 @@ public class MemberController extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Member Controller 진입");
 		HttpSession session=request.getSession();
+		Command cmd=new Command();
 		MemberBean member=null;
 		StudentBean student=null;
+		Map<?,?> map=null;
 		MemberService service=MemberServiceImpl.getInstance();
 		Separator.init(request);
+		PageProxy pxy=new PageProxy(request);
+		pxy.setPageSize(5);
+		pxy.setBlockSize(5);
 		switch (request.getParameter(Action.CMD)) {
 		case Action.MOVE:
+		student=new StudentBean();
+			if(request.getParameter("page").equals("update")){
+				cmd.setMember_id(request.getParameter("member_id"));
+				student=service.studentById(cmd);
+				System.out.println("업데이트할 학생정보 : "+student);
+				request.setAttribute("student", student);
+			}
 			DispatcherServlet.send(request, response);
 			break;
 		case Action.LOGIN:
-			student=new StudentBean();
-			student.setMember_id(request.getParameter(Database.MEMBER_ID));
-			student.setPassword(request.getParameter(Database.MEMBER_PASSWORD));
+			member=new MemberBean();
+			cmd.setMember_id(request.getParameter(Database.MEMBER_ID));
+			cmd.setPassword(request.getParameter(Database.MEMBER_PASSWORD));
 			
-			System.out.println("입력한 아이디비번은 .." +student.getMember_id()+"/"+student.getPassword());
+			System.out.println("cmd에 담긴 아이디 패스워드 : "+cmd.getMember_id()+"/"+cmd.getPassword());
 			
-			Map<String,Object> param=service.login(student);
-			if(param.get("page").equals("main")){
+			member=service.login(cmd);
+			
+			System.out.println("조회된 멤버 정보 : "+member);
+			
+			if(member.getId()==null){
+				Separator.cmd.setDir("member");
+				Separator.cmd.setPage("login");
+				Separator.cmd.process();
+			}else{
+				session.setAttribute("user", member);
 				Separator.cmd.setDir("common");
-				session.setAttribute("user", param.get("user"));
-				System.out.println(session.getAttribute("user"));
+				Separator.cmd.setPage("main");
+				Separator.cmd.process();
 			}
-			Separator.cmd.setPage(String.valueOf(param.get("page")));
-			Separator.cmd.process();
 			DispatcherServlet.send(request, response);
 			break;
 		case Action.JOIN:
 			
 			System.out.println("join 진입");
 			member=new MemberBean();
-			Map<?,?> map=ParamsIterator.execute(request);
+			map=ParamsIterator.execute(request);
 			System.out.println(map.toString());
 			member.setId((String)map.get("member_id"));
 			member.setPw((String)map.get("password"));
@@ -113,14 +133,13 @@ public class MemberController extends HttpServlet {
 			
 		case Action.LIST:
 			System.out.println("member list진입");
-			PageProxy pxy=new PageProxy(request);
-			pxy.setPageSize(5);
-			pxy.setBlockSize(5);
-			pxy.setTheNumberOfRows(Integer.parseInt(service.countMembers()));
 			pxy.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
-			int[] arr=PageHandler.attr(pxy);
-			int[] arr2=BlockHandler.attr(pxy);
-			pxy.execute(arr2, service.getMembers(arr));
+			System.out.println("전체회원수 : "+service.countMembers(cmd));
+			pxy.setTheNumberOfRows(Integer.parseInt(service.countMembers(cmd)));
+			
+			pxy.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
+			cmd=PageHandler.attr(pxy);
+			pxy.execute(BlockHandler.attr(pxy), service.getMembers(cmd));
 			
 			System.out.println("request : "+request);
 			DispatcherServlet.send(request, response);
@@ -129,7 +148,8 @@ public class MemberController extends HttpServlet {
 			System.out.println("member detail 진입");
 			student=new StudentBean();
 			System.out.println("디테일 아이디 : "+request.getParameter("member_id"));
-			student=service.studentById(request.getParameter("member_id"));
+			cmd.setMember_id(request.getParameter("member_id"));
+			student=service.studentById(cmd);
 			System.out.println("가져온 학생 정보 : "+student);
 			request.setAttribute("student", student);
 			DispatcherServlet.send(request, response);
@@ -176,12 +196,36 @@ public class MemberController extends HttpServlet {
 			break;
 		case Action.DELETE:
 			System.out.println("delete 진입..");
-			String result3=service.remove(request.getParameter("member_id"));
+		//	String result3=service.remove(request.getParameter("member_id"));
 			String path2=request.getContextPath();
 			response.sendRedirect(path2+"/member.do?action=list&page=list&pageNumber=1");
 			break;
+		case Action.SEARCH:
+			System.out.println("member search진입");
+			map=ParamsIterator.execute(request);
+			System.out.println("검색눌렀을 떄 넘어온 파라미터 맵 : "+map.toString());
+			
+			cmd.setColumn("name");
+			cmd.setSearch(String.valueOf(map.get("search")));
+			
+			String theNumberOfRows=service.countMembersByName(cmd);
+			pxy.setTheNumberOfRows(Integer.parseInt(theNumberOfRows));
+			pxy.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
+			cmd=PageHandler.attr(pxy);
+			cmd.setSearch(String.valueOf(map.get("search")));
+		
+			
+			System.out.println("cmd 저장된 값들 : "+cmd.getSearch()+"/"+cmd.getStartRow()+"/"+cmd.getEndRow());
+			
+			
+			System.out.println("검색되서 불러온 학생 리스트 : "+(List<StudentBean>) service.getMemberByName(cmd));
+			pxy.execute(BlockHandler.attr(pxy), (List<StudentBean>) service.getMemberByName(cmd));
+			request.setAttribute("search", request.getParameter("search"));
+			DispatcherServlet.send(request, response);
+			break;
+			
 		case "dbtest":
-			request.setAttribute("count", service.countMembers());
+			request.setAttribute("count", service.countMembers(cmd));
 			DispatcherServlet.send(request, response);
 			break;
 		default:

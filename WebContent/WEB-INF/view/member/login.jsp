@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="${stx}/WEB-INF/view/common/common_head.jsp" />
+<jsp:include page="/WEB-INF/view/common/common_head.jsp" />
 <body>
 <div class="container">
   <h2>로그인</h2>
@@ -22,7 +22,6 @@
 </div>
 	<script>
 	window.onload=mainLoad();
-
 	function loginAlert(){
 		var member_id=document.getElementById("member_id").value;
 		var password=document.getElementById('password').value;
@@ -39,6 +38,6 @@
 		form.action="${ctx}/member.do";
 		return true;
 	}
-</script>
+	</script>
 </body>
 </html>

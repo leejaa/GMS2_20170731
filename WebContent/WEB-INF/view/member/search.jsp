@@ -22,9 +22,9 @@
   <div class="col-lg-6">
     <div class="input-group">
       <span class="input-group-btn">
-        <button class="btn btn-default" type="button" onclick="search()">Go!</button>
+        <button class="btn btn-default" type="button" onclick="search()">검색한 단어</button>
       </span>
-      <input type="text" class="form-control" placeholder="Search for..." id="search">
+      <input type="text" class="form-control" id="search" placeholder="단어입력">
     </div><!-- /input-group -->
   </div><!-- /.col-lg-6 -->
  
@@ -66,7 +66,7 @@
 
  
 
-<div class="container" style="width: 500px;margin: 0 auto;">
+ <div class="container" style="width: 500px;margin: 0 auto;">
   
   <ul class="pagination">
   
@@ -98,7 +98,7 @@
     </c:if>
   </ul>
 
-  </div>
+  </div> 
 </div>
 </body>
 <script>
